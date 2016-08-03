@@ -1,11 +1,16 @@
 try(require("shiny")||install.packages("shiny"))
 try(require("cluster")||install.packages("cluster"))
-try(require("ggbiplot")||install.packages("ggbiplot"))
 try(require("mclust")||install.packages("mclust"))
 try(require("MASS")||install.packages("MASS"))
+try(require("devtools")||install.packages("devtools"))
+library("devtools")
+try(require("ggbiplot")||install_github("ggbiplot","vqv"))
 
 library("shiny")
 library("cluster")
 library("ggbiplot")
 library("mclust")
 library("MASS")
+
+
+
