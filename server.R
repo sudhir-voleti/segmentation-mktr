@@ -51,7 +51,30 @@ shinyServer(function(input, output) {
           return(Dataset1)
         }
       })
+
+      output$downloadData1 <- downloadHandler(
+        filename = function() { "ConneCtorPDASegmentation.csv" },
+        content = function(file) {
+          write.csv(read.csv("data/ConneCtorPDASegmentation.csv"), file, row.names=F)
+        }
+      )
       
+      output$downloadData2 <- downloadHandler(
+        filename = function() { "ConneCtorPDADiscriminant.csv" },
+        content = function(file) {
+          write.csv(read.csv("data/ConneCtorPDADiscriminant.csv"), file, row.names=F)
+        }
+      )
+      
+      output$downloadData3 <- downloadHandler(
+        filename = function() { "ConneCtorPDAClassification.csv" },
+        content = function(file) {
+          write.csv(read.csv("data/ConneCtorPDAClassification.csv"), file, row.names=F, col.names=F)
+        }
+      )
+      
+      
+            
   output$table <- renderTable({
     if (input$select == "K-Means") ({
       
