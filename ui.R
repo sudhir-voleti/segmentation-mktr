@@ -81,8 +81,8 @@ submitButton(text = "Apply Changes", icon("refresh"))
                 # discriminat
                 
                 tabPanel("Plot",h3("Segments Plot"), plotOutput("plot",height = 700, width = 840)),
-                tabPanel("Data Segment",tableOutput("table")), 
-                tabPanel("Data Target",tableOutput("table1")) 
+                tabPanel("Data Segment",dataTableOutput("table"),tags$head(tags$style("tfoot {display: table-header-group;}"))), 
+                tabPanel("Data Target",dataTableOutput("table1")) 
                 )
       ) 
     ) 

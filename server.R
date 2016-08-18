@@ -75,7 +75,8 @@ shinyServer(function(input, output) {
       
       
             
-  output$table <- renderTable({
+  output$table <- renderDataTable({
+    set.seed(12345)
     if (input$select == "K-Means") ({
       
       if (is.null(input$file)) {
@@ -86,7 +87,7 @@ shinyServer(function(input, output) {
       else {
         fit = kmeans(Dataset(),input$Clust)
         Segment.Membership =  fit$cluster
-        d = data.frame(Segment.Membership,Dataset2())
+        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
         d
       }
     })
@@ -101,7 +102,7 @@ shinyServer(function(input, output) {
       else {
         fit = Mclust(Dataset(),input$Clust)
         Segment.Membership =  fit$classification
-        d = data.frame(Segment.Membership,Dataset2())
+        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
         d
       }
     })
@@ -115,11 +116,11 @@ shinyServer(function(input, output) {
         distm <- dist(Dataset(), method = "euclidean") # distance matrix
         fit <- hclust(distm, method="ward") 
         Segment.Membership =  cutree(fit, k=input$Clust)
-        d = data.frame(Segment.Membership,Dataset2())
+        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
         d
       }
     })  
-  })
+  }, options = list(lengthMenu = c(5, 30, 50,100), pageLength = 30))
   
   output$caption1 <- renderText({
     if (input$select == "Model Based") return ("Model Based Segmentation -  Summary")
@@ -138,6 +139,9 @@ shinyServer(function(input, output) {
   })
   
   output$summary <- renderPrint({
+    
+    set.seed(12345)
+    
     if (input$select == "K-Means") ({
       
       if (is.null(input$file)) {
@@ -186,6 +190,7 @@ shinyServer(function(input, output) {
   })
   
   output$discriminat <- renderPrint({
+    set.seed(12345)
     if (input$select == "K-Means") ({
       fit = kmeans(Dataset(),input$Clust)
       Segment.Membership = as.character(fit$cluster)
@@ -216,6 +221,7 @@ shinyServer(function(input, output) {
   
   ############------------------------------------------------------------------------------------------#############
   output$targeting <- renderPrint({
+    set.seed(12345)
     if (input$select == "K-Means") ({
       fit = kmeans(Dataset(),input$Clust)
       Segment.Membership = as.character(fit$cluster)
@@ -241,7 +247,7 @@ shinyServer(function(input, output) {
   ###############3-------------------------------------------------------------------3############################################
   
   
-  output$table1 <- renderTable({
+  output$table1 <- renderDataTable({
     
     if (input$select == "K-Means") ({
       fit = kmeans(Dataset(),input$Clust)
@@ -265,7 +271,7 @@ shinyServer(function(input, output) {
     
     Targeted.segment = prediction$class
     data.frame(Targeted.segment, target_data())
-  })
+  }, options = list(lengthMenu = c(5, 30, 50), pageLength = 30))
     
   
   output$plotpca = renderPlot({ 
@@ -281,6 +287,7 @@ shinyServer(function(input, output) {
     })
     
   output$plot = renderPlot({  
+    set.seed(12345)
     
     if (input$select == "K-Means") ({
       if (is.null(input$file)) {
