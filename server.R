@@ -73,53 +73,55 @@ shinyServer(function(input, output) {
         }
       )
       
-      
+      t0 = reactive({
+        set.seed(12345)
+        if (input$select == "K-Means") ({
+          
+          if (is.null(input$file)) {
+            # User has not uploaded a file yet
+            return(data.frame())
+          }
+          
+          else {
+            fit = kmeans(Dataset(),input$Clust)
+            Segment.Membership =  fit$cluster
+            d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
+            d
+          }
+        })
+        
+        else  if (input$select == "Model Based") ({
+          
+          if (is.null(input$file)) {
+            # User has not uploaded a file yet
+            return(data.frame())
+          }
+          
+          else {
+            fit = Mclust(Dataset(),input$Clust)
+            Segment.Membership =  fit$classification
+            d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
+            d
+          }
+        })
+        
+        else if (input$select == "Hierarchical") ({
+          if (is.null(input$file)) {
+            # User has not uploaded a file yet
+            return(data.frame())
+          }
+          else {
+            distm <- dist(Dataset(), method = "euclidean") # distance matrix
+            fit <- hclust(distm, method="ward") 
+            Segment.Membership =  cutree(fit, k=input$Clust)
+            d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
+            d
+          }
+        })
+      })
             
   output$table <- renderDataTable({
-    set.seed(12345)
-    if (input$select == "K-Means") ({
-      
-      if (is.null(input$file)) {
-        # User has not uploaded a file yet
-        return(data.frame())
-      }
-      
-      else {
-        fit = kmeans(Dataset(),input$Clust)
-        Segment.Membership =  fit$cluster
-        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
-        d
-      }
-    })
-    
-    else  if (input$select == "Model Based") ({
-      
-      if (is.null(input$file)) {
-        # User has not uploaded a file yet
-        return(data.frame())
-      }
-      
-      else {
-        fit = Mclust(Dataset(),input$Clust)
-        Segment.Membership =  fit$classification
-        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
-        d
-      }
-    })
-    
-    else if (input$select == "Hierarchical") ({
-      if (is.null(input$file)) {
-        # User has not uploaded a file yet
-        return(data.frame())
-      }
-      else {
-        distm <- dist(Dataset(), method = "euclidean") # distance matrix
-        fit <- hclust(distm, method="ward") 
-        Segment.Membership =  cutree(fit, k=input$Clust)
-        d = data.frame(r.name = row.names(Dataset2()),Segment.Membership,Dataset2())
-        d
-      }
-    })  
+    t0()
   }, options = list(lengthMenu = c(5, 30, 50,100), pageLength = 30))
   
   output$caption1 <- renderText({
@@ -246,9 +248,7 @@ shinyServer(function(input, output) {
       })
   ###############3-------------------------------------------------------------------3############################################
   
-  
-  output$table1 <- renderDataTable({
-    
+  t1 = reactive({
     if (input$select == "K-Means") ({
       fit = kmeans(Dataset(),input$Clust)
       Segment.Membership = as.character(fit$cluster)
@@ -271,6 +271,11 @@ shinyServer(function(input, output) {
     
     Targeted.segment = prediction$class
     data.frame(Targeted.segment, target_data())
+  })
+  
+  output$table1 <- renderDataTable({
+    t1()
+
   }, options = list(lengthMenu = c(5, 30, 50), pageLength = 30))
     
   
@@ -360,5 +365,20 @@ shinyServer(function(input, output) {
       rect.hclust(fit, k=input$Clust, border="red") 
     })
   })
+  
+  output$downloadData4 <- downloadHandler(
+    filename = function() { "segmentation.csv" },
+    content = function(file) {
+      write.csv(t0(), file, row.names=F)
+    }
+  )
+  
+  output$downloadData5 <- downloadHandler(
+    filename = function() { "targeting.csv" },
+    content = function(file) {
+      write.csv(t1(), file, row.names=F)
+    }
+  )
+  
   
 })

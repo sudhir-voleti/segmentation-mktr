@@ -81,8 +81,12 @@ submitButton(text = "Apply Changes", icon("refresh"))
                 # discriminat
                 
                 tabPanel("Plot",h3("Segments Plot"), plotOutput("plot",height = 700, width = 840)),
-                tabPanel("Data Segment",dataTableOutput("table"),tags$head(tags$style("tfoot {display: table-header-group;}"))), 
-                tabPanel("Data Target",dataTableOutput("table1")) 
+                tabPanel("Data Segment",br(),
+                         downloadButton('downloadData4', 'Download Segmentation file'), br(),br(),
+                         dataTableOutput("table"),tags$head(tags$style("tfoot {display: table-header-group;}"))), 
+                tabPanel("Data Target",br(),
+                         downloadButton('downloadData5', 'Download Targeting file'), br(),br(),
+                         dataTableOutput("table1")) 
                 )
       ) 
     ) 
