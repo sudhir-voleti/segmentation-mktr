@@ -1,4 +1,6 @@
 try(require("shiny")||install.packages("shiny"))
+try(require("devtools")||install.packages("devtools"))
+
 library("devtools")
 try(require("gtable"))||install.packages("gtable")
 try(require("Rcpp"))||install.packages("Rcpp")
