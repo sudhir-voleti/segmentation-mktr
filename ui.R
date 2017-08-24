@@ -75,7 +75,8 @@ submitButton(text = "Apply Changes", icon("refresh"))
                 tabPanel("Summary - Segmentation",h3(textOutput("caption1")), h4(div(textOutput("caption2"),style = "color:Red")),
                          plotOutput("plotpca",height = 400, width = 500),verbatimTextOutput("summary")),
                 
-                tabPanel("Summary - Discriminant", verbatimTextOutput("discriminat")),
+                tabPanel("Summary - Discriminant",plotOutput('discplot'),
+                         verbatimTextOutput("discriminatp")),
                 tabPanel("Summary - Targeting", verbatimTextOutput("targeting")),
                 
                 # discriminat

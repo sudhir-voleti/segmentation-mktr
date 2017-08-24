@@ -8,6 +8,10 @@ library("ggbiplot")
 library("mclust")
 library("MASS")
 
+library("ggplot2")
+library("scales")
+library("gridExtra")
+
 shinyServer(function(input, output) {
   
   Dataset <- reactive({
@@ -191,7 +195,7 @@ shinyServer(function(input, output) {
     })  
   })
   
-  output$discriminat <- renderPrint({
+  discriminat <- reactive({
     set.seed(12345)
     if (input$select == "K-Means") ({
       fit = kmeans(Dataset(),input$Clust)
@@ -211,16 +215,57 @@ shinyServer(function(input, output) {
     
     data = discri_data()
     
-    fit <- lda(Classification ~ . , data=data, na.action = "na.omit", CV=TRUE)
-    fit0 <- lda(Classification ~ . , data=data)
+    fit <- lda(Classification ~ . , data=data, 
+               na.action = "na.omit", CV=TRUE)
+    # fit0 <- lda(Classification ~ . , data=data)
     ct <- table(Classification, fit$class)
     Proportion = diag(prop.table(ct, 1))
     Percent.Correct = sum(diag(prop.table(ct)))*100
+    
+    lda <- lda(Classification ~ ., 
+               data
+               # prior = c(1,1,1)/3
+               )
+    
+    pca <- prcomp(data,
+                  center = TRUE,
+                  scale. = TRUE) 
+    
+    plda <- predict(object = lda,
+                    newdata = data)
+    
+    dataset = data.frame(Segment = Segment.Membership,
+                         pca = pca$x, lda = plda$x)
+    
+    
     discri = list(confusion.matrix = ct, 
-                  Proportion= Proportion, Percent.Correct = Percent.Correct,modelout = fit0)
-    discri
+                  Proportion= Proportion, 
+                  Percent.Correct = Percent.Correct,
+                  modelout = fit,
+                  dataset = dataset
+                  )
+    return(discri)
+  })
+
+  output$discriminatp <- renderPrint({
+    discriminat()[1:4]
   })
   
+  output$discplot = renderPlot({
+    
+    dataset = discriminat()$dataset
+  
+  p1 <- ggplot(dataset) + geom_point(aes(lda.LD1, lda.LD2, colour = Segment, shape = Segment), size = 2.5) + 
+    labs(x = paste("LD1 (", percent(prop.lda[1]), ")", sep=""),
+         y = paste("LD2 (", percent(prop.lda[2]), ")", sep=""))
+  
+  p2 <- ggplot(dataset) + geom_point(aes(pca.PC1, pca.PC2, colour = Segment, shape = Segment), size = 2.5) +
+    labs(x = paste("PC1 (", percent(prop.pca[1]), ")", sep=""),
+         y = paste("PC2 (", percent(prop.pca[2]), ")", sep=""))
+  
+  grid.arrange(p1, p2)
+  
+  })
   ############------------------------------------------------------------------------------------------#############
   output$targeting <- renderPrint({
     set.seed(12345)
