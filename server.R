@@ -227,22 +227,26 @@ shinyServer(function(input, output) {
                # prior = c(1,1,1)/3
                )
     
+    prop.lda = lda$svd^2/sum(lda$svd^2)
+# 
     pca <- prcomp(data,
                   center = TRUE,
-                  scale. = TRUE) 
+                  scale. = TRUE)
     
     plda <- predict(object = lda,
                     newdata = data)
     
     dataset = data.frame(Segment = Segment.Membership,
-                         pca = pca$x, lda = plda$x)
+                         pca = pca$x,
+                         lda = plda$x)
     
     
     discri = list(confusion.matrix = ct, 
                   Proportion= Proportion, 
                   Percent.Correct = Percent.Correct,
                   modelout = fit,
-                  dataset = dataset
+                  dataset = dataset,
+                  prop.lda = prop.lda
                   )
     return(discri)
   })
@@ -254,16 +258,19 @@ shinyServer(function(input, output) {
   output$discplot = renderPlot({
     
     dataset = discriminat()$dataset
+    
+    prop.lda = discriminat()$prop.lda
   
   p1 <- ggplot(dataset) + geom_point(aes(lda.LD1, lda.LD2, colour = Segment, shape = Segment), size = 2.5) + 
     labs(x = paste("LD1 (", percent(prop.lda[1]), ")", sep=""),
          y = paste("LD2 (", percent(prop.lda[2]), ")", sep=""))
   
-  p2 <- ggplot(dataset) + geom_point(aes(pca.PC1, pca.PC2, colour = Segment, shape = Segment), size = 2.5) +
-    labs(x = paste("PC1 (", percent(prop.pca[1]), ")", sep=""),
-         y = paste("PC2 (", percent(prop.pca[2]), ")", sep=""))
-  
-  grid.arrange(p1, p2)
+  # p2 <- ggplot(dataset) + geom_point(aes(pca.PC1, pca.PC2, colour = Segment, shape = Segment), size = 2.5) +
+  #   labs(x = paste("PC1 (", percent(prop.pca[1]), ")", sep=""),
+  #        y = paste("PC2 (", percent(prop.pca[2]), ")", sep=""))
+  # 
+  # grid.arrange(p1, p2)
+  p1
   
   })
   ############------------------------------------------------------------------------------------------#############
