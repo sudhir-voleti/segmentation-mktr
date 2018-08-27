@@ -7,7 +7,7 @@ library("shiny")
 
 shinyUI(pageWithSidebar(
   # Header:
-  headerPanel("Segmentation Discriminant & Classification"),
+  headerPanel("Segmentation Analysis"),
   # Input in sidepanel:
   sidebarPanel(
 
