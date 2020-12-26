@@ -12,10 +12,10 @@ library('MASS')
 library('ggplot2')
 library('scales')
 library('gridExtra')
-library('dplyr')
-library('dendextend')
-library('DT')
+library('data.table')
 library('tibble')
+library('DT')
+library('dendextend')
 
 
 
@@ -99,6 +99,14 @@ shinyServer(function(input, output){
     })
   })
     
+  
+  output$seg_count <- renderTable({
+    
+                          seg_table <- as.data.frame(table(t0()$Segment.Membership))
+                          colnames(seg_table) <- c("Segment", "Member Count") 
+                          return(seg_table)
+                        })
+  
     output$table <- renderDataTable({
       t0()
     }, options = list(lengthMenu = c(5, 30, 50,100), pageLength = 30))
