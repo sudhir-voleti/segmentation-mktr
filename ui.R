@@ -3,6 +3,9 @@
 ####################################################
 library('dplyr')
 library("shiny")
+library('DT')
+library('dendextend')
+library('ggbiplot')
 #library("foreign")
 
 shinyUI(fluidPage(
@@ -55,7 +58,7 @@ submitButton(text = "Apply Changes", icon("refresh"))
                 #tabPanel("Data",h3(textOutput("caption"),tableOutput("table"))),
                 
                 tabPanel("Summary - Segmentation",h3(textOutput("caption1")), h4(div(textOutput("caption2"),style = "color:Red")),
-                           plotOutput("plotpca",height = 400, width = 500),dataTableOutput("summary")),
+                           plotOutput("plotpca",height = 400, width = 500),tableOutput('seg_count'),dataTableOutput("summary")),
                 
                 tabPanel("Plot",h3("Segments Plot"), plotOutput("plot",height = 700, width = 840)),
                 tabPanel("Data Segment",br(),
